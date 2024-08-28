@@ -76,8 +76,28 @@ WSGI_APPLICATION = 'BIZDOC.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'BIZDOC',  # Name of your MongoDB database
+        'ENCRYPTED': True,  # Use if your MongoDB connection is encrypted (optional)
+        'CLIENT': {
+            'host': 'bizdoc.321q3.mongodb.net',  # MongoDB host
+            'port': 27017,  # MongoDB port
+            'username': 'nikhilpr',  # MongoDB username, if authentication is enabled
+            'password': 'Ax2ryTTGhuXpfNZq',  # MongoDB password, if authentication is enabled
+            'authSource': 'admin',  # Authentication database (usually 'admin')
+        }
+    }
+}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'BIZDOC',
+        'CLIENT': {
+            'host': 'mongodb+srv://nikhilpr:Ax2ryTTGhuXpfNZq@bizdoc.321q3.mongodb.net/?retryWrites=true&w=majority&appName=BIZDOC',
+            'username': 'nikhilpr',
+            'password': 'Ax2ryTTGhuXpfNZq',
+        }
     }
 }
 
