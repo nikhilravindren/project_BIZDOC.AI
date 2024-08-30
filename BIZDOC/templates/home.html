@@ -1,0 +1,54 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-200 shadow p-4 flex justify-between items-center">
+        <!-- Left side (BizDoc AI) --> 
+        <div>
+            <a href="#" class="text-2xl font-bold text-black">BizDoc AI</a>
+        </div>
+
+        <!-- Right side (Menu, About, Login) -->
+        <div class="space-x-6">
+            <a href="#" class="text-black hover:text-gray-700">Menu</a>
+            <a href="#" class="text-black hover:text-gray-700">About</a>
+            <a href="#" class="text-black hover:text-gray-700">Login</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex justify-between items-center p-8 h-screen">
+        <!-- Left Side (Welcome Message and Lorem Ipsum) -->
+        <div class="max-w-lg">
+            <h2>{{request.user}}</h2>
+            <h1 class="text-4xl font-semibold text-white mb-4">Welcome to BizDoc AI!</h1>
+            <p class="text-gray-300 text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </div>
+        <form action="{% url 'form' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="company" style="border-color: aqua;">
+            <input type="text" name="sector" style="border-color: aqua;">
+            <button type="submit">submit</button>
+        </form>
+        <br>
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="username" style="border-color: aqua;">
+            <input type="text" name="password" style="border-color: aqua;">
+            <button type="submit">submit</button>
+        </form>
+
+        <!-- Right Side (Image) -->
+        <div>
+            <img src="C:\Users\mayur\OneDrive\Desktop\Trimester(4)\Project\bg img.jpg" alt="Image" class="w-[600px] h-[400px] object-contain rounded shadow-lg">
+        </div>
+    </div>
+
+</body>
+</html>

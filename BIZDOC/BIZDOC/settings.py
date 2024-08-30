@@ -94,9 +94,11 @@ DATABASES = {
         'ENGINE': 'djongo',
         'NAME': 'BIZDOC',
         'CLIENT': {
-            'host': 'mongodb+srv://nikhilpr:Ax2ryTTGhuXpfNZq@bizdoc.321q3.mongodb.net/?retryWrites=true&w=majority&appName=BIZDOC',
+            'host': 'mongodb+srv://nikhilpr:<Ax2ryTTGhuXpfNZq>@cluster0.f3jgf.mongodb.net/',
             'username': 'nikhilpr',
             'password': 'Ax2ryTTGhuXpfNZq',
+            'tls': True, 
+            'tlsInsecure': True,
         }
     }
 }
