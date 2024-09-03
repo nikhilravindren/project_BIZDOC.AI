@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIZDOC.AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-100">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-200 shadow p-4 flex justify-between items-center fixed top-0 left-0 right-0 z-50">
+        <!-- Left side (BizDoc AI) -->
+        <div>
+            <a href="#" class="text-2xl font-bold text-black">BizDoc AI</a>
+        </div>
+
+        <div class="flex items-center space-x-6">
+            <a href="{% url 'home' %}" class="text-black text-lg font-semibold hover:text-gray-800">Home</a>
+            <a href="#" class="text-black text-lg font-semibold hover:text-gray-800">About</a>
+            <a href="#" class="text-black text-lg font-semibold hover:text-gray-800">Services</a>
+            {% if request.user.username %}
+            <a href="{% url 'chat' %}" class="text-black text-lg font-semibold hover:text-gray-800">Chat</a>
+            {% endif %}
+            {% if request.user.username %}
+            <a href="{% url 'logout' %}" class="text-black text-lg font-semibold hover:text-gray-800">Logout</a>
+            <!-- Profile Picture Link -->
+            <a href="{% url 'dashboard' %}">
+                <img src="{% static 'images/output_image_without_broad_blue.png' %}" alt="Profile" class="w-10 h-10 rounded-full">
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}" class="text-black text-lg font-semibold hover:text-gray-800">Login</a>
+            {% endif %}
+        </div>
+        
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-16"> <!-- Add padding-top to prevent content from hiding behind the fixed navbar -->
+        {% block content %}
+        <!-- Your content goes here -->
+        {% endblock content %}
+    </div>
+
+</body>
+</html>

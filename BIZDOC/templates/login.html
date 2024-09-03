@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2 style="margin-left: 40%;margin-top: 2%;">{{msg}}</h2>
+        <!-- Main Content -->
+        <div class="flex justify-center items-center h-screen">
+            <div id="login-form" class="bg-gray-100 p-8 rounded-lg shadow-lg w-80">
+                <h2 class="text-2xl font-semibold mb-4 text-center text-black">Login</h2>
+                <form action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="email" class="block text-black font-medium mb-2">Username</label>
+                        <input type="text" id="email" name="username" class="w-full p-2 border border-gray-300 rounded bg-white text-black" placeholder="Enter username">
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="block text-black font-medium mb-2">Password</label>
+                        <input type="password" id="password" name="password" class="w-full p-2 border border-gray-300 rounded bg-white text-black" placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="w-full bg-gray-800 text-white p-2 rounded hover:bg-gray-700">Login</button>
+                </form>
+                <p class="mt-4 text-sm text-black text-center">
+                    Not a user? <a href="#" class="text-blue-500 hover:underline" onclick="showSignup()">Sign up</a>
+                </p>
+            </div>
+    
+            <!-- Signup Form (Initially hidden) -->
+            <div id="signup-form" class="hidden bg-gray-100 p-8 rounded-lg shadow-lg w-80">
+                <h2 class="text-2xl font-semibold mb-4 text-center text-black">Sign Up</h2>
+                <form action="{% url 'register' %}" method="post">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="name" class="block text-black font-medium mb-2">Name</label>
+                        <input type="text" id="name" name="username" class="w-full p-2 border border-gray-300 rounded bg-white text-black" placeholder="Enter your username">
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-black font-medium mb-2">Email</label>
+                        <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded bg-white text-black" placeholder="Enter your email">
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="block text-black font-medium mb-2">Password</label>
+                        <input type="password" id="password" name="password" class="w-full p-2 border border-gray-300 rounded bg-white text-black" placeholder="Enter your password">
+                    </div>
+                    <div class="mb-4">
+                        <label for="confirm-password" class="block text-black font-medium mb-2">Confirm Password</label>
+                        <input type="password" id="confirm-password" name="cpassword" class="w-full p-2 border border-gray-300 rounded bg-white text-black" placeholder="Confirm your password">
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gray-800 text-white p-2 rounded hover:bg-gray-700">Sign Up</button>
+                </form>
+                <p class="mt-4 text-sm text-black text-center">
+                    Already a user? <a href="#" class="text-blue-500 hover:underline" onclick="showLogin()">Login</a>
+                </p>
+            </div>
+        </div>
+    
+        <!-- Script to toggle between forms -->
+        <script>
+            function showSignup() {
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('signup-form').classList.remove('hidden');
+            }
+    
+            function showLogin() {
+                document.getElementById('signup-form').classList.add('hidden');
+                document.getElementById('login-form').classList.remove('hidden');
+            }
+        </script>
+    
+    
+
+{% endblock content %}
+

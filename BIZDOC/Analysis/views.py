@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth import login, authenticate,logout
 import requests
 from bs4 import BeautifulSoup
@@ -8,6 +8,8 @@ from .models import company, sentiment
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 import os
 import warnings
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
 # Suppress specific warnings
 warnings.filterwarnings("ignore", message="TypedStorage is deprecated")
@@ -30,20 +32,51 @@ def user_user_login(request):
                 return redirect('home')
             else:
                 msg = "You are not autherized for the access!"
-                return render(request, 'home.html', {'msg': msg})
+                return render(request, 'login.html', {'msg': msg})
         else:
             msg = "Wrong credentials"
-            return render(request, 'home.html', {"msg": msg})
-    return render(request, 'home.html')
+            return render(request, 'login.html', {"msg": msg})
+    return render(request, 'login.html')
 
 def user_logout(request):
     logout(request)
     return redirect('home')
 
 
+def create_ac(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        cpassword = request.POST.get('cpassword')
+        email = request.POST.get('email')
+        
+        if User.objects.filter(username=username):
+            msg = 'This username already exists please login to continue!'
+            return render(request, 'login.html', {'msg': msg})
+        
+        if password != cpassword:
+            msg = "Passwords do not match!"
+            return render(request, 'login.html', {'msg': msg})
+        
+        else:
+            hashed_password = make_password(password)
+            User.objects.create(username=username, password=hashed_password, email=email)
+            msg = "user created successfully ,please login to continue!"
+            return render(request, 'login.html', {'msg': msg})
+    
+    return render(request, 'login.html')
+
+
 
 def home(request):
     return render(request, 'home.html')
+
+def dashboard(request):
+    return render(request,'dashboard.html')
+
+
+def chat(request):
+    return render(request,'chat.html')
 
 def form_submit(request):
     if request.method == "POST":

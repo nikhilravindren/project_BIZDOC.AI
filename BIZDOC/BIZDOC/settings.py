@@ -48,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Analysis.middleware.mongodb_middleware.MongoDBConnectionMiddleware',
 ]
 
 ROOT_URLCONF = 'BIZDOC.urls'
@@ -92,16 +93,18 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'BIZDOC',
+        'NAME': 'BIZDOC',  # The name of your MongoDB database
         'CLIENT': {
-            'host': 'mongodb+srv://nikhilpr:<Ax2ryTTGhuXpfNZq>@cluster0.f3jgf.mongodb.net/',
+            'host': 'mongodb+srv://nikhilpr:Ax2ryTTGhuXpfNZq@cluster0.f3jgf.mongodb.net/BIZDOC',  # Full URI with your database name
             'username': 'nikhilpr',
             'password': 'Ax2ryTTGhuXpfNZq',
-            'tls': True, 
-            'tlsInsecure': True,
+            'authSource': 'admin',  # Optional: specify if your user is authenticated in a specific database
+            'tls': True,  # Enable TLS/SSL for the connection
+            'tlsInsecure': True,  # Set this to True if you don't want to validate certificates (usually False in production)
         }
     }
 }
+
 
 
 # Password validation
@@ -139,6 +142,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [BASE_DIR / "static",]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
