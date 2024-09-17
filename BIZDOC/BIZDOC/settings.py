@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Analysis',
+    'cadmin',
 ]
 
 MIDDLEWARE = [
@@ -93,17 +94,21 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'BIZDOC',  # The name of your MongoDB database
+        'NAME': 'BIZDOC',
         'CLIENT': {
-            'host': 'mongodb+srv://nikhilpr:Ax2ryTTGhuXpfNZq@cluster0.f3jgf.mongodb.net/BIZDOC',  # Full URI with your database name
+            'host': 'mongodb+srv://nikhilpr:Ax2ryTTGhuXpfNZq@cluster0.f3jgf.mongodb.net/BIZDOC',
             'username': 'nikhilpr',
             'password': 'Ax2ryTTGhuXpfNZq',
-            'authSource': 'admin',  # Optional: specify if your user is authenticated in a specific database
-            'tls': True,  # Enable TLS/SSL for the connection
-            'tlsInsecure': True,  # Set this to True if you don't want to validate certificates (usually False in production)
+            'authSource': 'admin',
+            'tls': True,
+            'tlsAllowInvalidCertificates': True,
+            'tlsAllowInvalidHostnames': True,
         }
     }
 }
+
+
+
 
 
 

@@ -72,7 +72,8 @@ def home(request):
     return render(request, 'home.html')
 
 def dashboard(request):
-    return render(request,'dashboard.html')
+    sentiment = sentiment.objects.values('sentiment').annotate(count=Count('id'))
+    return render(request,'dashboard.html',{'sentiment':sentiment})
 
 
 def chat(request):
@@ -82,7 +83,9 @@ def form_submit(request):
     if request.method == "POST":
         company_name = request.POST.get('company')
         sector = request.POST.get('sector')
-        analyze_news_sentiment(request, company_name, sector)
+        print(company)
+        if analyze_news_sentiment(request, company_name, sector):
+            return render(request,'home.html',{"msg":analyze_news_sentiment(request, company_name, sector)})
     
     return redirect('home')
 
@@ -151,7 +154,7 @@ def analyze_news_sentiment(request, company_name, sector):
     
     if not news_texts:
         print("Failed to fetch news or no news available.")
-        return
+        return "Failed to fetch news or no news available."
     
     sentiment_data = finbert_analyzer.predict(news_texts)
     summary = news_summarizer.summarize(news_texts)

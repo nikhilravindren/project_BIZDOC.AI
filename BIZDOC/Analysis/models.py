@@ -15,3 +15,6 @@ class sentiment(models.Model):
     news = models.TextField(max_length=1000, null=False, blank=False,default=1)
     sentiment = models.CharField(max_length=100, null=False, blank=False,default=1)
     confidence = models.FloatField(null=False, blank=False)
+
+
+
