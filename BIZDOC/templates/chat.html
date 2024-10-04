@@ -27,7 +27,9 @@
         <!-- Content Area -->
         <div id="mainContent" style="flex: 1; margin-left: 12%; padding: 24px; overflow-y: auto; transition: margin-left 0.3s ease;">
             <h2 style="font-size: 1.5rem; font-weight: 600;">Main Content</h2>
-            <p id="contentText" style="margin-top: 16px;">Select a document to see the content here.</p>
+            <p id="contentText" style="margin-top: 16px;">
+                <p><strong></strong> {{ response_message }}</p>
+</p>
             <!-- This div is just to enable scrolling for testing -->
             <div style="height: 2000px;"></div>
         </div>
@@ -42,7 +44,8 @@
                 <button onclick="removeFile()" class="ml-4 text-red-500 hover:text-red-700">&times;</button>
             </div>
         
-            <form action="/your-submit-url" method="POST" enctype="multipart/form-data" class="flex items-center w-full">
+            <form action="{% url 'chating' %}" method="POST" enctype="multipart/form-data" class="flex items-center w-full">
+                {% csrf_token %}
                 <!-- Text Input -->
                 <input type="text" name="message" id="messageInput" class="flex-1 p-2 border rounded" placeholder="Type your message..." style="color: black;">
                 
@@ -104,4 +107,6 @@
         filePreview.style.display = 'none'; // Hide the file preview
     }
     </script>
+
+    
 {% endblock content %}

@@ -8,6 +8,11 @@ from .models import company, sentiment
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 import os
 import warnings
+import openai
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.db.models import Sum,Count,Avg
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
@@ -72,8 +77,10 @@ def home(request):
     return render(request, 'home.html')
 
 def dashboard(request):
-    sentiment = sentiment.objects.values('sentiment').annotate(count=Count('id'))
-    return render(request,'dashboard.html',{'sentiment':sentiment})
+    sentiments = sentiment.objects.values('sentiment').annotate(count=Count('id'))
+    sector = company.objects.values('sector').annotate(count=Count('name'))
+    ellam = sentiment.objects.filter(user=request.user)
+    return render(request,'dashboard.html',{'sentiment':sentiments,'sector':sector,'all':ellam})
 
 
 def chat(request):
@@ -150,7 +157,7 @@ class FinBERTSentimentAnalyzer:
 def analyze_news_sentiment(request, company_name, sector):
     news_texts = fetch_news(company_name)
     finbert_analyzer = FinBERTSentimentAnalyzer()
-    news_summarizer = FastNewsSummarizer()
+    news_summarizer = FastNewsSummarizer(2000)
     
     if not news_texts:
         print("Failed to fetch news or no news available.")
@@ -173,18 +180,19 @@ def analyze_news_sentiment(request, company_name, sector):
 
 # Fast News Summarizer using T5 model
 class FastNewsSummarizer:
-    def __init__(self):
+    def __init__(self,max_length):
         cache_dir = 'E:/'  
         os.environ['TRANSFORMERS_CACHE'] = cache_dir
         self.tokenizer = T5Tokenizer.from_pretrained('t5-base', cache_dir=cache_dir, legacy=False)
         self.model = T5ForConditionalGeneration.from_pretrained('t5-base', cache_dir=cache_dir)
+        self.max_length = max_length
     
     def summarize(self, text):
-        inputs = self.tokenizer.encode("summarize: " + text, return_tensors="pt", max_length=1024, truncation=True)
+        inputs = self.tokenizer.encode("summarize: " + text, return_tensors="pt", max_length=self.max_length, truncation=True)
         
         summary_ids = self.model.generate(
             inputs,
-            max_length=2000, 
+            max_length=self.max_length, 
             min_length=100,   
             length_penalty=2.0,
             num_beams=4,
@@ -193,4 +201,119 @@ class FastNewsSummarizer:
         summary = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         return summary
 
+
+
+
+
+# Set your OpenAI API key
+import openai
+import logging
+from django.shortcuts import render
+from django.http import JsonResponse
+from PyPDF2 import PdfReader
+
+# Set your OpenAI API key
+openai.api_key = ''
+
+def chating(request):
+    # Initialize conversation history in session if it doesn't exist
+    if 'conversation_history' not in request.session:
+        request.session['conversation_history'] = []
+
+    response_message = ""
+
+    if request.method == "POST":
+        user_message = request.POST.get('message')
+        uploaded_file = request.FILES.get('uploaded_file')
+
+        try:
+            # If the user sends a message
+            if user_message:
+                request.session['conversation_history'].append({'role': 'user', 'content': user_message})
+                response_message = chat_with_gpt(request.session['conversation_history'], request)
+
+            # If the user uploads a PDF
+            elif uploaded_file and uploaded_file.name.endswith('.pdf'):
+                pdf_text = extract_text_from_pdf(uploaded_file)
+                news_summarizer = FastNewsSummarizer(30000)
+                pdf_text = news_summarizer.summarize(pdf_text)
+                if pdf_text:
+                    request.session['conversation_history'].append({'role': 'user', 'content': pdf_text})
+                    request.session['conversation_history'].append({'role': 'user', 'content': "give me a summary of this company"})
+                    response_message = chat_with_gpt(request.session['conversation_history'], request)
+                    print(response_message)
+                else:
+                    return JsonResponse({"error": "Failed to extract text from the PDF."}, status=400)
+
+            else:
+                return JsonResponse({"error": "Please provide a valid text message or upload a PDF file."}, status=400)
+
+        except Exception as e:
+            logging.error(f"Error during chat: {str(e)}")
+            response_message = f"An error occurred: {str(e)}"
+
+    return render(request, 'chat.html', {'response': response_message, 'history': request.session['conversation_history'][-1]})
+
+def chat_with_gpt(conversation_history, request):
+    # Format conversation history for API
+    messages = [{"role": msg['role'], "content": msg['content']} for msg in conversation_history]
+
+    # Call the OpenAI API with the conversation history
+    response = openai.ChatCompletion.create(
+        model="gpt-4o",
+        messages=messages
+    )
+    
+    # Get the assistant's response
+    assistant_message = response['choices'][0]['message']['content']
+    # Append assistant's response to history
+    
+    # Save updated history back to session
+    request.session['conversation_history'] = conversation_history
+
+    return assistant_message
+
+import logging
+from PyPDF2 import PdfReader
+import camelot
+
+def extract_text_from_pdf(file):
+    try:
+        # Step 1: Extract text using PyPDF2
+        pdf_reader = PdfReader(file)
+        extracted_text = ""
+
+        # Iterate through each page and extract text
+        for page in pdf_reader.pages:
+            text = page.extract_text()
+            if text:
+                extracted_text += text + "\n"  # Append extracted text with a newline
+
+        # Step 2: Extract tables using Camelot
+        extracted_tables = ""
+        try:
+            # Use Camelot to extract tables from the PDF (this works well with structured PDFs)
+            tables = camelot.read_pdf(file, pages='all')
+            for i, table in enumerate(tables):
+                extracted_tables += f"\nTable {i + 1}:\n"
+                extracted_tables += table.df.to_string(index=False) + "\n"
+        except Exception as table_err:
+            logging.error(f"Error extracting tables: {str(table_err)}")
+            extracted_tables += "\n[Error extracting tables]\n"
+
+        # Combine text and table content
+        combined_output = extracted_text.strip() + "\n" + extracted_tables.strip()
+
+        return combined_output
+    except Exception as e:
+        logging.error(f"Error reading PDF: {str(e)}")
+        return None
+
+
+
+def shareholding(request):
+    user_message = "give me the share holder pattern of TCS company in  square bracket, just need the list with holding percentage only no other text"
+    request.session['conversation_history'].append({'role': 'user', 'content': user_message})
+    response_message = chat_with_gpt(request.session['conversation_history'], request)
+    
 

@@ -17,4 +17,14 @@ class sentiment(models.Model):
     confidence = models.FloatField(null=False, blank=False)
 
 
+class Analysis(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    company = models.ForeignKey(company,on_delete=models.CASCADE)
+    shareholders_pattern = models.JSONField()
+    balance_sheet = models.JSONField()
+
+
+
+
+
 
