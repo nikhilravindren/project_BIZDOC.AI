@@ -20,11 +20,14 @@ class sentiment(models.Model):
 class Analysis(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     company = models.ForeignKey(company,on_delete=models.CASCADE)
-    shareholders_pattern = models.JSONField()
-    balance_sheet = models.JSONField()
+    summary = models.JSONField(null=True,blank=True)
+    balance_sheet = models.JSONField(null=True,blank=True)
 
 
-
+class shareholders_pattern(models.Model):
+    company = models.ForeignKey(company,on_delete=models.CASCADE)
+    holder = models.JSONField(null=True,blank=True)
+    numbers = models.JSONField(null=True,blank=True)
 
 
 

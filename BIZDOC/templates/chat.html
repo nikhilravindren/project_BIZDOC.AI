@@ -6,13 +6,15 @@
         <!-- Sidebar -->
         <div id="sidebar" style="position: fixed; top: 6%; left: 0%; height: 100vh; background-color: #2d3748; color: white; width: 12%; transform: translateX(0); transition: transform 0.3s ease;">
             <div style="padding: 24px; padding-left: 50px;">
+                {% if request.session.company %}
                 <h1 style="font-size: 1.5rem; font-weight: bold;">Menu</h1>
                 <ul style="margin-top: 24px; list-style: none; padding: 0;">
-                    <li><a href="#" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">Doc 1</a></li>
-                    <li><a href="#" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">Doc 2</a></li>
-                    <li><a href="#" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">Doc 3</a></li>
+                    <li><a href="{% url 'director_message' %}" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">director message</a></li>
+                    <li><a href="{% url 'shareholding' %}" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">share holding</a></li>
+                    <li><a href="{% url 'form' %}" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">sentiment analysis</a></li>
                     <li><a href="#" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">Doc 4</a></li>
                 </ul>
+                {% endif %}
             </div>
         </div>
         
@@ -28,8 +30,23 @@
         <div id="mainContent" style="flex: 1; margin-left: 12%; padding: 24px; overflow-y: auto; transition: margin-left 0.3s ease;">
             <h2 style="font-size: 1.5rem; font-weight: 600;">Main Content</h2>
             <p id="contentText" style="margin-top: 16px;">
-                <p><strong></strong> {{ response_message }}</p>
-</p>
+                {% if director_msg %}
+                <p><strong>{{ director_msg }}</strong> </p>
+                {% endif %}
+                {% if msg %}
+                <p><strong>{{ msg.news }}</strong> </p>
+                <p><strong>{{ msg.sentiment }}</strong> </p>
+                <p><strong>{{ msg.confidence }}</strong> </p>
+                <p><strong>{{msg}}</strong> </p>
+                {% endif %}
+                <p><strong>{{ response }}</strong> </p>
+                {% if numbers %}
+                <p>{{numbers}}</p>
+                <p>{{holder}}</p>
+                <div class="w-1/3 bg-gray-800 p-4 rounded-lg shadow-lg">
+                    <canvas id="pieChart1"></canvas>
+                </div>
+                {% endif %}
             <!-- This div is just to enable scrolling for testing -->
             <div style="height: 2000px;"></div>
         </div>
@@ -106,6 +123,32 @@
         fileNameSpan.textContent = ''; // Clear the file name
         filePreview.style.display = 'none'; // Hide the file preview
     }
+
+
+    const pieCtx = document.getElementById('pieChart1').getContext('2d');
+        const pieChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels:[ 
+                {% for i in holder %}
+                "{{i}}",
+                {% endfor %}
+            ],
+                datasets: [{
+                    label: 'Company Names',
+                    data: [ 
+                {% for i in numbers %}
+                    {{i}},
+                {% endfor %}
+            ],
+                    backgroundColor : ['#1f77b4', '#ff7f0e', '#2ca02c']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio : false
+            }
+        });
     </script>
 
     

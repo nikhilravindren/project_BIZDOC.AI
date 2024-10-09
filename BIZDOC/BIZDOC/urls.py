@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from Analysis.views import home,form_submit,user_user_login,create_ac,chat,user_logout,dashboard,chating
+from Analysis.views import home,form_submit,user_user_login,create_ac,chat,user_logout,dashboard,chating,shareholding,director_message
 from cadmin.views import DBadmin
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +28,9 @@ urlpatterns = [
     path('logout',user_logout,name='logout'),
     path('dashboard',dashboard,name='dashboard'),
     path('chating',chating,name='chating'),
+    path('shareholding',shareholding,name='shareholding'),
+    path('director_message',director_message,name='director_message'),
+
     path('DBadmin',DBadmin,name='DBadmin'),
 
 ]
