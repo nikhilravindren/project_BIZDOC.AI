@@ -18,16 +18,32 @@ class sentiment(models.Model):
 
 
 class Analysis(models.Model):
+    date = models.DateField(blank=False,default=datetime.datetime.now)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     company = models.ForeignKey(company,on_delete=models.CASCADE)
     summary = models.JSONField(null=True,blank=True)
     balance_sheet = models.JSONField(null=True,blank=True)
+    director_message = models.JSONField(null=True,blank=True)
 
 
 class shareholders_pattern(models.Model):
     company = models.ForeignKey(company,on_delete=models.CASCADE)
     holder = models.JSONField(null=True,blank=True)
     numbers = models.JSONField(null=True,blank=True)
+
+
+class comparison(models.Model):
+    company1 = models.ForeignKey(company,on_delete=models.CASCADE,related_name='comparison_as_company1')
+    company2 = models.ForeignKey(company,on_delete=models.CASCADE,related_name='comparison_as_company2')
+    report  =  models.JSONField(null=True,blank=True)
+    date = models.DateField(blank=False,default=datetime.datetime.now)
+
+class contanct(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    name = models.CharField(null=False,blank=False,max_length=225)
+    mail = models.CharField(null=False,blank=False,max_length=225)
+    message  = models.TextField(max_length=1000, null=False, blank=False)
+    date = models.DateField(blank=False,default=datetime.datetime.now)
 
 
 

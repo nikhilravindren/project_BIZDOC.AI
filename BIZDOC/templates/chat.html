@@ -9,10 +9,32 @@
                 {% if request.session.company %}
                 <h1 style="font-size: 1.5rem; font-weight: bold;">Menu</h1>
                 <ul style="margin-top: 24px; list-style: none; padding: 0;">
+                    <li><a href="{% url 'summary' %}" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">summary</a></li>
                     <li><a href="{% url 'director_message' %}" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">director message</a></li>
                     <li><a href="{% url 'shareholding' %}" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">share holding</a></li>
                     <li><a href="{% url 'form' %}" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">sentiment analysis</a></li>
-                    <li><a href="#" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">Doc 4</a></li>
+                    <li><a href="{% url 'balance_sheet' %}" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">balance sheet</a></li>
+                    <li style="position: relative;">
+                        <!-- The main link that acts as a trigger for the dropdown -->
+                        <a href="#" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" 
+                           onmouseover="this.style.backgroundColor='#4a5568';" 
+                           onmouseout="this.style.backgroundColor='';" 
+                           onclick="toggleDropdown(event)">
+                            Compare with
+                        </a>
+                    
+                        <!-- Dropdown Menu -->
+                        <ul id="dropdownMenu" style="display: none; position: absolute; left: 0; top: 100%; background-color: #2d3748; padding: 8px; border-radius: 4px; list-style: none; margin: 0;">
+                            {% for company in companies %}
+                                <li><a href="{% url 'compare' id=company.id%}" style="display: block; padding: 8px; color: white; text-decoration: none;" 
+                                       onmouseover="this.style.backgroundColor='#4a5568';" 
+                                       onmouseout="this.style.backgroundColor='';">
+                                    {{ company.name }}
+                                </a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    
                 </ul>
                 {% endif %}
             </div>
@@ -28,24 +50,37 @@
         
         <!-- Content Area -->
         <div id="mainContent" style="flex: 1; margin-left: 12%; padding: 24px; overflow-y: auto; transition: margin-left 0.3s ease;">
-            <h2 style="font-size: 1.5rem; font-weight: 600;">Main Content</h2>
+            <h2 style="font-size: 1.5rem; font-weight: 600;">Reports</h2>
             <p id="contentText" style="margin-top: 16px;">
+                {% if comparison %}
+                <div>{{ comparison|safe }}</div>
+                {% endif %}
+                {% if summary %}
+                <div>{{ summary|safe }}</div>
+                {% endif %}
                 {% if director_msg %}
-                <p><strong>{{ director_msg }}</strong> </p>
+                <div>{{ director_msg|safe }}</div>
                 {% endif %}
                 {% if msg %}
-                <p><strong>{{ msg.news }}</strong> </p>
-                <p><strong>{{ msg.sentiment }}</strong> </p>
-                <p><strong>{{ msg.confidence }}</strong> </p>
-                <p><strong>{{msg}}</strong> </p>
+                <p><strong><center>{{ msg.news }}</center></strong> </p>
+                <p><strong><center>{{ msg.sentiment }}</center></strong> </p>
+                <p><strong><center>{{ msg.confidence }}</center></strong> </p>
+                <p><strong><center>{{msg}}</center></strong> </p>
                 {% endif %}
-                <p><strong>{{ response }}</strong> </p>
+                <div>{{ response|safe }}</div>
                 {% if numbers %}
-                <p>{{numbers}}</p>
-                <p>{{holder}}</p>
+                {% for i in holder %}
+                <p><strong><center>{{i}}</center></strong></p>
+                {% endfor %}
+                <p><center>above mentioned institutions and individuals are the major share holders</center></p>
+                <center>
                 <div class="w-1/3 bg-gray-800 p-4 rounded-lg shadow-lg">
                     <canvas id="pieChart1"></canvas>
                 </div>
+            </center>
+                {% endif %}
+                {% if balancesheet %}
+                <div><center>{{balancesheet|safe}}</center></div>
                 {% endif %}
             <!-- This div is just to enable scrolling for testing -->
             <div style="height: 2000px;"></div>
@@ -87,6 +122,19 @@
     </div>
 
     <script>
+         function toggleDropdown(event) {
+        event.preventDefault();  // Prevent the default link behavior
+        var dropdown = document.getElementById('dropdownMenu');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Hide the dropdown if the user clicks outside of it
+    document.addEventListener('click', function(e) {
+        var dropdown = document.getElementById('dropdownMenu');
+        if (!dropdown.contains(e.target) && e.target.closest('a') === null) {
+            dropdown.style.display = 'none';
+        }
+    });
         // JavaScript to toggle sidebar visibility and adjust main content margin
         document.getElementById('toggleSidebarButton').addEventListener('click', function() {
             const sidebar = document.getElementById('sidebar');

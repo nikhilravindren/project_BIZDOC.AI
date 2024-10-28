@@ -1,0 +1,54 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+   <!-- Services Content -->
+   <section class="py-16 px-8 md:px-20 lg:px-40">
+    <h1 class="text-5xl font-semibold text-center text-gray-100 mb-12">Our Services</h1>
+
+    <div class="border-t border-gray-700 my-12"></div>
+    <!-- Services Offered -->
+    <div class="my-12">
+        <!-- <h2 class="text-4xl font-semibold text-center text-gray-100 mb-8">What We Offer</h2> -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-3 text-white">Document Upload and Storage</h3>
+                <p class="text-gray-300">Easily upload various business documents in formats such as PDF and DOCX. Our system securely stores them and allows for easy retrieval.</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-3 text-white">AI-Driven Document Analysis</h3>
+                <p class="text-gray-300">Utilizing OpenAI APIs, we provide efficient analysis and summarization of financial records and business reports.</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-3 text-white">Interactive Query Response</h3>
+                <p class="text-gray-300">Ask specific questions regarding your documents, and receive detailed, AI-generated responses.</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-3 text-white">Sentiment Analysis</h3>
+                <p class="text-gray-300">Get real-time insights into market sentiments by scraping and analyzing news data relevant to your business.</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-3 text-white">Company Comparison</h3>
+                <p class="text-gray-300">Compare key metrics and trends across different companies to make informed business decisions.</p>
+            </div>
+
+            <!-- User Dashboard Section -->
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-3 text-white">User Dashboard</h3>
+                <p class="text-gray-300">Each user has a unique user ID and password, allowing access to a personalized dashboard that logs all activities, including uploaded documents, analyzed companies, and timestamps.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Statement -->
+    <div class="border-t border-gray-700 my-12"></div>
+    <div class="text-center mt-16">
+        <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+            BizDoc AI is here to be an invaluable resource for companies seeking insights and a competitive edge in the market.
+        </p>
+    </div>
+
+  
+</section>
+
+    {% endblock content %}

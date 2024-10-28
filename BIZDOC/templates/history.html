@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <!-- Main Content -->
+    <div id="sidebar" style="position: fixed; top: 6%; left: 0%; height: 100vh; background-color: #2d3748; color: white; width: 12%; transform: translateX(0); transition: transform 0.3s ease;">
+        <div style="padding: 24px; padding-left: 50px;">
+            <h1 style="font-size: 1.5rem; font-weight: bold;">Menu</h1>
+            <ul style="margin-top: 24px; list-style: none; padding: 0;">
+                {% for i in top5 %}
+                <li><a href="{% url 'history' id=i.id %}" style="display: block; padding: 8px; border-radius: 4px; text-decoration: none; color: inherit;" onmouseover="this.style.backgroundColor='#4a5568';" onmouseout="this.style.backgroundColor='';">{{i.company.name}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Fixed Button to Toggle Sidebar -->
+    <button id="toggleSidebarButton" style="position: fixed; top: 9%; left: 0%; z-index: 40; background-color: #2d3748; color: white; padding: 8px; border-radius: 4px;">
+        <!-- Hamburger Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    </button>
+        <!-- Dashboard Content -->
+        <div id="mainContent" style="flex: 1; margin-left: 12%; padding: 24px; overflow-y: auto; transition: margin-left 0.3s ease;">
+            
+
+            <!-- Analysis Table -->
+            <div class="bg-gray-800 p-4 rounded-lg shadow-lg mt-8">
+                <h2 class="text-xl font-semibold text-white mb-4">find your Analysis</h2>
+                <table class="min-w-full bg-gray-800 text-white">
+                    <button>company name : {{analysis.company.name}}</button>
+                    <br>
+                    <button>company sector : {{analysis.company.sector}}
+                        <br>
+                    </button>
+                    <thead>
+                        <tr>
+                            <br>
+                            <p>press the bottons to see further analysis</p>
+                            <th class="py-2 px-4 border-b border-gray-600"><button onclick="showSection('summary')">Summary</button></th>
+                            <th class="py-2 px-4 border-b border-gray-600"><button onclick="showSection('director_message')">director message</button></th>
+                            <th class="py-2 px-4 border-b border-gray-600"><button onclick="showSection('balance_sheet')">balance sheet</button></th>
+                            <th class="py-2 px-4 border-b border-gray-600"><button onclick="showSection('share_holders')">share holders</button></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div id="summary" class="content-section">
+                <h2>Summary</h2>
+                <div>{{ analysis.summary|safe }}</div>
+            </div>
+        
+            <div id="director_message" class="content-section">
+                <h2>director message</h2>
+                <div>{{ analysis.director_message|safe }}</div>
+            </div>
+        
+            <div id="balance_sheet" class="content-section">
+                <h2>balance sheet</h2>
+                <div>{{ analysis.balance_sheet|safe }}</div>
+            </div>
+            <div id="share_holders" class="content-section">
+                <h2>share_holders</h2>
+                <center>
+                    <div class="w-1/3 bg-gray-800 p-4 rounded-lg shadow-lg" style="height: 400px;">
+                        <canvas id="pieChart1" width="400" height="400"></canvas>
+                    </div>
+                    
+                </center>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Hide all content sections by default */
+        .content-section {
+            display: none;
+        }
+    </style>
+
+    <script>
+
+function showSection(sectionId) {
+            // Hide all content sections
+            var sections = document.getElementsByClassName('content-section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].style.display = 'none';
+            }
+            // Show the selected section
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        document.getElementById('toggleSidebarButton').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (sidebar.style.transform === 'translateX(0%)') {
+                sidebar.style.transform = 'translateX(-100%)';
+                mainContent.style.marginLeft = '2%';
+            } else {
+                sidebar.style.transform = 'translateX(0%)';
+                mainContent.style.marginLeft = '12%';
+            }
+        });
+        // Placeholder for future database connection
+        // TODO: Connect to a database and dynamically populate the table and charts
+
+        const pieCtx = document.getElementById('pieChart1').getContext('2d');
+    const pieChart = new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: [
+                {% for label in shareholding1 %}
+                    "{{ label }}",
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Shareholding',
+                data: [
+                    {% for value in shareholding2 %}
+                        {{ value }},
+                    {% endfor %}
+                ],
+                backgroundColor: ['#1f77b4', '#ff7f0e', '#2ca02c'] // Add more colors if needed
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+        }
+    });
+    </script>
+{% endblock content %}
